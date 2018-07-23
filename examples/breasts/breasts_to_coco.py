@@ -9,8 +9,8 @@ from PIL import Image
 import numpy as np
 from pycococreatortools import pycococreatortools
 
-ROOT_DIR = 'C:/Ducy/Repos/pycococreator/examples/breasts/train'
-IMAGE_DIR = os.path.join(ROOT_DIR, "breasts_train2018")
+ROOT_DIR = 'C:/Ducy/Repos/pycococreator/examples/breasts/datasets'
+IMAGE_DIR = os.path.join(ROOT_DIR, "train2018")
 ANNOTATION_DIR = os.path.join(ROOT_DIR, "annotations")
 
 INFO = {
@@ -107,7 +107,7 @@ def main():
 
             image_id = image_id + 1
 
-    with open('{}/instances_breasts_train2018.json'.format(ROOT_DIR), 'w') as output_json_file:
+    with open('{}/annotations/instances_train2018.json'.format(ROOT_DIR), 'w') as output_json_file:
         json.dump(coco_output, output_json_file)
 
 
