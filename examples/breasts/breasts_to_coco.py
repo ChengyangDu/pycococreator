@@ -10,8 +10,8 @@ import numpy as np
 from pycococreatortools import pycococreatortools
 
 #Need to modify here#
-DATA_SET_CAT = "train"
-ROOT_DIR = 'C:/Ducy/Repos/pycococreator/examples/breasts/datasets'
+DATA_SET_CAT = "val"
+ROOT_DIR = 'C:/Ducy/DataSets/breast_coco'
 
 IMAGE_DIR = os.path.join(ROOT_DIR, DATA_SET_CAT+"2018")
 ANNOTATION_DIR = os.path.join(ROOT_DIR, "annotations_"+DATA_SET_CAT)
@@ -53,9 +53,10 @@ def filter_for_annotations(root, files, image_filename):
     file_types = ['*.png']
     file_types = r'|'.join([fnmatch.translate(x) for x in file_types])
     basename_no_extension = os.path.splitext(os.path.basename(image_filename))[0]
-    file_name_prefix = basename_no_extension + '.*'
+    file_name_prefix = basename_no_extension.split('_')[2] + '_*'
     files = [os.path.join(root, f) for f in files]
     files = [f for f in files if re.match(file_types, f)]
+
     files = [f for f in files if re.match(file_name_prefix, os.path.splitext(os.path.basename(f))[0])]
 
     return files
@@ -70,18 +71,22 @@ def main():
         "annotations": []
     }
 
-    image_id = 1
     segmentation_id = 1
     
+    image_id = 1
+
     # filter for jpeg images
     for root, _, files in os.walk(IMAGE_DIR):
         image_files = filter_for_png(root, files)
 
         # go through each image
         for image_filename in image_files:
-            image = Image.open(image_filename)
+            full_path = os.path.join(root, image_filename)
+
+            image_id = int(image_filename.split('.')[0].split('_')[3])
+            image = Image.open(full_path)
             image_info = pycococreatortools.create_image_info(
-                image_id, os.path.basename(image_filename), image.size)
+                image_id, os.path.basename(full_path), image.size)
             coco_output["images"].append(image_info)
 
             # filter for associated png annotations
@@ -107,8 +112,6 @@ def main():
                         coco_output["annotations"].append(annotation_info)
 
                     segmentation_id = segmentation_id + 1
-
-            image_id = image_id + 1
 
     with open('{}/instances_{}2018.json'.format(ROOT_DIR, DATA_SET_CAT), 'w') as output_json_file:
         json.dump(coco_output, output_json_file)
