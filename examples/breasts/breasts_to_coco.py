@@ -113,7 +113,10 @@ def main():
 
                     segmentation_id = segmentation_id + 1
 
-    with open('{}/instances_{}2018.json'.format(ROOT_DIR, DATA_SET_CAT), 'w') as output_json_file:
+    annotation_folder = os.path.join(ROOT_DIR, 'annotations')
+    if not os.path.exists(annotation_folder):
+        os.makedirs(annotation_folder)
+    with open('{}/instances_{}2018.json'.format(annotation_folder, DATA_SET_CAT), 'w') as output_json_file:
         json.dump(coco_output, output_json_file)
 
 
